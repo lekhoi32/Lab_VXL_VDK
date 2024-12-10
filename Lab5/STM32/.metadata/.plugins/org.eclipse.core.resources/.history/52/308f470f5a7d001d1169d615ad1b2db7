@@ -1,0 +1,48 @@
+/*
+ * global.h
+ *
+ *  Created on: Dec 16, 2022
+ *      Author: dell
+ */
+
+#ifndef INC_GLOBAL_H_
+#define INC_GLOBAL_H_
+
+#define MAX_BUFFER_SIZE 30
+#define FALSE 0
+#define TRUE 1
+
+#define INIT 			0
+#define CM_SOC 			1
+#define CM_R 			2
+#define CM_RS 			3
+#define CM_RST			4
+#define CM_RST_HASH 	5
+#define CM_O 			6
+#define CM_OK 			7
+#define CM_OK_HASH 		8
+#define UART_SEND 		11
+#define UART_WAIT 		12
+#define MAX_BUFFER_SIZE 30
+
+
+extern int status_parser;
+extern int status_uart;
+extern uint8_t temp;
+extern uint8_t buffer[MAX_BUFFER_SIZE];
+extern uint8_t index_buffer;
+extern uint8_t buffer_flag;
+extern uint8_t command_flag;
+extern uint8_t command_data[50];
+extern char str[50];
+extern uint32_t ADC_value;
+
+extern int counter;
+extern int enableClock;
+
+extern int isRST;
+extern int isOK;
+
+extern int isPrint;
+
+#endif /* INC_GLOBAL_H_ */

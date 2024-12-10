@@ -1,0 +1,53 @@
+/*
+ * uart_communication.c
+ *
+ *  Created on: Dec 13, 2022
+ *      Author: dell
+ */
+#include "uart_communication.h"
+
+void uart_communiation_fsm() {
+	status(status_uart) {
+	case WAIT_RST:
+		if (command_done == 1) {
+			command_done = 0;
+			if (command[0] == 'R' && command[0] == 'S' && command[0] == 'T') {
+				ADC_value = HAL_ADC_GetValue(&hadc1);
+				status_uart = SEND;
+			}
+		}
+		break;
+	case SEND:
+		HAL_UART_Transmit(&huart2, (void*)str, sprintf(str, "!ADC = %lu#\r\n", ADC_value), 1000);
+		status_uart = WAIT_OK;
+		break;
+	case WAIT_OK:
+		if (command_done == 1) {
+			command_done = 0;
+			if (command[0] == 'O' && command[0] == 'K') {
+				status_uart = WAIT_RST;
+			}
+		}
+		if(timer_flag[1] == 0) {
+			status_uart = SEND;
+			setTimer(1, 3000);
+		}
+	}
+}
+//	if(isRST == TRUE) {
+//		enableClock = TRUE;
+//		if(isPrint == TRUE) {
+//			HAL_UART_Transmit(&huart2, (void*)str, sizeof(str), 1000);
+//			isPrint = FALSE;
+//		}
+//	}
+//
+//	if(isOK == TRUE) {
+//		isRST = FALSE;
+//		isOK = FALSE;
+//		enableClock = FALSE;
+//		counter = MAX_COUNT;
+//		isPrint = FALSE;
+//	}
+
+

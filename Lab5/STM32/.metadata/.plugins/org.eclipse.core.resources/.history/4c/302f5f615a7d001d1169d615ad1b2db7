@@ -1,0 +1,118 @@
+/*
+ * command_parser.c
+ *
+ *  Created on: Dec 13, 2022
+ *      Author: dell
+ */
+#include "command_parser.h"
+
+uint8_t command[MAX_BUFFER_SIZE];
+uint8_t command_index = 0;
+uint8_t command_done = 0;
+
+
+void command_parser_fsm() {
+	switch(status_parser) {
+	case INIT:
+		if(temp == '!') {
+			status_parser = WAIT_END;
+			command_index = 0;
+		}
+		break;
+	case WAIT_END:
+		if(temp == '#') {
+			status_parser = INIT;
+			command[command_index] = '\0';
+			command_flag = 1;
+		}
+		else {
+			command[command_index++] = temp;
+			if (command_index == MAX_BUFFER_SIZE) command_index = 0;
+		}
+		break;
+	}
+}
+
+//
+//	case CM_SOC:
+//		if(temp == 'R')
+//			status_parser = CM_SOC_R;
+//		else if(temp == 'O')
+//			status_parser = CM_SOC_O;
+//		else if(temp == '!')
+//			status_parser = CM_SOC;
+//		else
+//			status_parser = char_initial;
+//		break;
+//
+//	// RST Command
+//	case CM_SOC_R:
+//		if(temp == (int)'S')
+//			status_parser = CM_SOC_RS;
+//		else if(temp == (int)'!')
+//			status_parser = CM_SOC;
+//		else
+//			status_parser = char_initial;
+//		break;
+//
+//	case CM_SOC_RS:
+//		if(temp == (int)'T')
+//			status_parser = CM_SOC_RST;
+//		else if(temp == (int)'!')
+//			status_parser = CM_SOC;
+//		else
+//			status_parser = char_initial;
+//		break;
+//	}
+//
+//	case CM_SOC_RST:
+//		if(temp == (int)'#') {
+//			isRST = TRUE;
+//			ADC_value = HAL_ADC_GetValue(&hadc1);
+//			HAL_UART_Transmit(&huart2, (void*)str, sprintf(str, "!ADC = %lu#\r\n", ADC_value), 1000);
+//			status_parser = CM_SOC_RST_HASH;
+//		}
+//		else if(temp == (int)'!')
+//			status_parser = CM_SOC;
+//		else
+//			status_parser = char_initial;
+//		break;
+//
+//	case CM_SOC_RST_HASH:
+//		if(temp == (int)'!')
+//			status_parser = CM_SOC;
+//		else
+//			status_parser = char_initial;
+//		break;
+//
+//	// OK Command
+//	case CM_SOC_O:
+//		if(temp == (int)'K')
+//			status_parser = CM_SOC_OK;
+//		else if(temp == (int)'!')
+//			status_parser = CM_SOC;
+//		else
+//			status_parser = char_initial;
+//		break;
+//
+//	case CM_SOC_OK:
+//		if(temp == (int)'#') {
+//			isOK = TRUE;
+//			HAL_UART_Transmit(&huart2, (void*)str, sprintf(str, "\n"), 1000);
+//			status_parser = CM_SOC_OK_HASH;
+//		}
+//		else if(temp == (int)'!')
+//			status_parser = CM_SOC;
+//		else
+//			status_parser = char_initial;
+//		break;
+//
+//	case CM_SOC_OK_HASH:
+//		if(temp == (int)'!')
+//			status_parser = CM_SOC;
+//		else
+//			status_parser = char_initial;
+//		break;
+//	}
+//}
+

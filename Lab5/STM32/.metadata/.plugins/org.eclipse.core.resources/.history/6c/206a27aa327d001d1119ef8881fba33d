@@ -1,0 +1,102 @@
+/*
+ * command_parser.c
+ *
+ *  Created on: Dec 13, 2022
+ *      Author: dell
+ */
+#include "command_parser.h"
+
+enum state {char_initial, char_DOT, char_DOT_R, char_DOT_RS, char_DOT_RST, char_DOT_RST_HASH, char_DOT_O, char_DOT_OK, char_DOT_OK_HASH};
+enum state currState = char_initial;
+
+uint8_t isRST = FALSE;
+uint8_t isOK = FALSE;
+
+void command_parser_fsm() {
+	switch(currState) {
+	case char_initial:
+		if(temp == (int)'!')
+			currState = char_DOT;
+		break;
+
+	case char_DOT:
+		if(temp == (int)'R')
+			currState = char_DOT_R;
+		else if(temp == (int)'O')
+			currState = char_DOT_O;
+		else if(temp == (int)'!')
+			currState = char_DOT;
+		else
+			currState = char_initial;
+		break;
+	// RST Command
+	case char_DOT_R:
+		if(temp == (int)'S')
+			currState = char_DOT_RS;
+		else if(temp == (int)'!')
+			currState = char_DOT;
+		else
+			currState = char_initial;
+		break;
+
+	case char_DOT_RS:
+		if(temp == (int)'T')
+			currState = char_DOT_RST;
+		else if(temp == (int)'!')
+			currState = char_DOT;
+		else
+			currState = char_initial;
+		break;
+	}
+
+	case char_DOT_RST:
+		if(temp == (int)'#') {
+			isRST = TRUE;
+			ADC_value = HAL_ADC_GetValue(&hadc1);
+			HAL_UART_Transmit(&huart2, (void*)str, sprintf(str, "!ADC = %lu#\r\n", ADC_value), 1000);
+			currState = char_DOT_RST_HASH;
+		}
+		else if(temp == (int)'!')
+			currState = char_DOT;
+		else
+			currState = char_initial;
+		break;
+
+	case char_DOT_RST_HASH:
+		if(temp == (int)'!')
+			currState = char_DOT;
+		else
+			currState = char_initial;
+		break;
+
+	// OK Command
+	case char_DOT_O:
+		if(temp == (int)'K')
+			currState = char_DOT_OK;
+		else if(temp == (int)'!')
+			currState = char_DOT;
+		else
+			currState = char_initial;
+		break;
+
+	case char_DOT_OK:
+		if(temp == (int)'#') {
+			isOK = TRUE;
+			HAL_UART_Transmit(&huart2, (void*)str, sprintf(str, "\n"), 1000);
+			currState = char_DOT_OK_HASH;
+		}
+		else if(temp == (int)'!')
+			currState = char_DOT;
+		else
+			currState = char_initial;
+		break;
+
+	case char_DOT_OK_HASH:
+		if(temp == (int)'!')
+			currState = char_DOT;
+		else
+			currState = char_initial;
+		break;
+	}
+}
+

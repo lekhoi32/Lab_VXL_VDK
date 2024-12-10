@@ -1,0 +1,27 @@
+/*
+ * global.c
+ *
+ *  Created on: Dec 16, 2022
+ *      Author: dell
+ */
+#include "global.h"
+
+uint8_t status_parser = INIT;
+uint8_t status_uart = INIT;
+uint8_t temp = 0;
+uint8_t buffer[MAX_BUFFER_SIZE];
+uint8_t index_buffer = 0;
+uint8_t buffer_flag = 0;
+uint8_t command_flag = 0;
+uint8_t command_data[50];
+uint32_t ADC_value;
+
+char str[50];
+
+int enableClock = FALSE;
+int isRST = FALSE;
+int isOK = FALSE;
+int isPrint = FALSE;
+
+
+

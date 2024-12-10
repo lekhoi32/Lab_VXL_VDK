@@ -1,0 +1,26 @@
+/*
+ * uart_communication.c
+ *
+ *  Created on: Dec 13, 2022
+ *      Author: dell
+ */
+#include "uart_communication.h"
+
+void uart_communiation_fsm() {
+	if(isRST == TRUE) {
+		enableClock = TRUE;
+		if(isPrint == TRUE) {
+			HAL_UART_Transmit(&huart2, (void*)str, sizeof(str), 1000);
+			isPrint = FALSE;
+		}
+	}
+
+	if(isOK == TRUE) {
+		isRST = FALSE;
+		isOK = FALSE;
+		enableClock = FALSE;
+		counter = MAX_COUNT;
+		isPrint = FALSE;
+	}
+}
+
